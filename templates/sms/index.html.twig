@@ -1,0 +1,127 @@
+{# templates/send_sms.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Envoyer un SMS{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                {# Affichage des messages flash #}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-3 shadow-sm" role="alert">
+                            {% if label == 'success' %}
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                            {% elseif label == 'error' %}
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            {% endif %}
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                
+                {# Message de confirmation si SMS envoyé #}
+                {% if smsSent and not app.flashes|length %}
+                    <div class="alert alert-success mb-3 text-center shadow-sm">
+                        <i class="bi bi-check-circle-fill me-2"></i>Le SMS a été envoyé avec succès.
+                    </div>
+                {% endif %}
+
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="text-center mb-0">Envoyer un SMS</h3>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'id': 'smsForm'}}) }}
+                            <div class="mb-3">
+                                {{ form_label(form.number) }}
+                                {{ form_widget(form.number, {'attr': {'class': form_errors(form.number) ? 'form-control is-invalid' : 'form-control'}}) }}
+                                {{ form_help(form.number) }}
+                                {{ form_errors(form.number) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.name) }}
+                                {{ form_widget(form.name, {'attr': {'class': form_errors(form.name) ? 'form-control is-invalid' : 'form-control'}}) }}
+                                {{ form_errors(form.name) }}
+                            </div>
+                            
+                            <div class="mb-4">
+                                {{ form_label(form.text) }}
+                                {{ form_widget(form.text, {'attr': {'class': form_errors(form.text) ? 'form-control is-invalid' : 'form-control'}}) }}
+                                <div class="form-text text-end mt-1"><span id="charCount">0</span>/160 caractères</div>
+                                {{ form_errors(form.text) }}
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary" id="sendButton">
+                                    <span class="spinner-border spinner-border-sm d-none" id="loadingSpinner" role="status" aria-hidden="true"></span>
+                                    <span id="buttonText">Envoyer le SMS</span>
+                                </button>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('smsForm');
+            const sendButton = document.getElementById('sendButton');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const buttonText = document.getElementById('buttonText');
+            const textarea = document.getElementById('form_text');
+            const charCount = document.getElementById('charCount');
+            
+            // Mise à jour initiale du compteur
+            if (textarea) {
+                charCount.textContent = textarea.value.length || 0;
+                updateCharCountStyle();
+            }
+            
+            // Compteur de caractères
+            textarea?.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+                updateCharCountStyle();
+            });
+            
+            // Fonction pour mettre à jour le style du compteur
+            function updateCharCountStyle() {
+                if (textarea.value.length > 160) {
+                    charCount.classList.add('text-danger');
+                } else {
+                    charCount.classList.remove('text-danger');
+                }
+            }
+            
+            // Afficher le spinner lors de la soumission
+            form?.addEventListener('submit', function(e) {
+                if (textarea && textarea.value.length > 160) {
+                    e.preventDefault();
+                    alert('Votre message ne peut pas dépasser 160 caractères.');
+                    return false;
+                }
+                
+                sendButton.setAttribute('disabled', 'disabled');
+                loadingSpinner.classList.remove('d-none');
+                buttonText.textContent = 'Envoi en cours...';
+            });
+            
+            // Fermeture auto des alertes après 5 secondes
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert:not(.alert-danger)');
+                alerts.forEach(function(alert) {
+                    const closeBtn = new bootstrap.Alert(alert);
+                    setTimeout(function() {
+                        closeBtn.close();
+                    }, 5000);
+                });
+            }, 100);
+        });
+    </script>
+{% endblock %}

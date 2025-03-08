@@ -1,0 +1,15 @@
+# Form labels
+"Numéro de téléphone :": "Phone number:"
+"Nom de l'expéditeur :": "Sender name:"
+"Message :": "Message:"
+
+# Form placeholders and help
+"+33 6 12 34 56 78": "+1 555 123 4567"
+"Format international recommandé (+33...)": "International format recommended (+1...)"
+
+# Buttons and other UI elements
+"Envoyer le SMS": "Send SMS"
+"Envoi en cours...": "Sending..."
+"Le SMS a été envoyé avec succès.": "SMS sent successfully."
+"Erreur lors de l'envoi:": "Error while sending:"
+"Votre message ne peut pas dépasser 160 caractères.": "Your message cannot exceed 160 characters."
