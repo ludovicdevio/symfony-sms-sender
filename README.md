@@ -59,6 +59,8 @@ Cette application web permet d'envoyer des SMS via l'API Twilio dans un environn
 
 2. Accédez à l'application dans votre navigateur à l'adresse: `https://localhost:8000`
 
+![alt text](sms.png)
+
 3. Remplissez le formulaire avec:
    - Le numéro de téléphone du destinataire (format international recommandé: +33XXXXXXXXX)
    - Le nom de l'expéditeur
